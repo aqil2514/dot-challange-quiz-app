@@ -25,14 +25,17 @@ export function AuthLoginCard() {
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: defaultValue,
+    mode: "onChange",
   });
 
   const userSelectHandle = (username: string, password: string) => {
     setContent("login-form");
-    form.setValue("password", password);
-    form.setValue("username", username);
+    form.setValue("password", password, { shouldValidate: true });
+    form.setValue("username", username, { shouldValidate: true });
 
-    toast.success(`Menggunakan akun dengan username ${username}. Silahkan login!`)
+    toast.success(
+      `Menggunakan akun dengan username ${username}. Silahkan login!`,
+    );
   };
 
   return (
