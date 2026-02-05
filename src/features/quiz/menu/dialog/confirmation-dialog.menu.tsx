@@ -10,8 +10,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
-import { useQuizStore } from "@/store/quiz.store";
+import { useQuizStore } from "@/store/quiz/quiz.store";
 import type { QuestConfigSchemaType } from "../schema/quest-config.schema";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -32,7 +33,7 @@ const quizType: Record<QuestConfigSchemaType["type"], string> = {
 };
 
 export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
-  const { meta, resetMeta, resetQuiz } = useQuizStore();
+  const { meta, resetMeta, resetQuiz, updateMeta } = useQuizStore();
   const config = meta.config;
 
   if (!config) return null;
@@ -40,6 +41,11 @@ export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
   const cancelHandle = () => {
     resetMeta();
     resetQuiz();
+  };
+
+  const playHandle = () => {
+    updateMeta("quizStatus", "play");
+    toast.info("Quiz dimulai! Selamat mengerjakan")
   };
 
   return (
@@ -70,7 +76,7 @@ export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
         <Separator />
         <AlertDialogFooter>
           <AlertDialogCancel onClick={cancelHandle}>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={playHandle}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

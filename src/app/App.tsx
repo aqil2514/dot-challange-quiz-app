@@ -1,7 +1,7 @@
 import { AuthTemplate } from "@/features/auth/Auth.template";
 import { Toaster } from "@/components/ui/sonner";
 import { useAppStore } from "@/store/app.store";
-import { MenuTemplate } from "@/features/menu/Menu.template";
+import { QuizTemplate } from "@/features/quiz/Quiz.template";
 
 function App() {
   return (
@@ -20,7 +20,7 @@ const FlexRender = () => {
       return <AuthTemplate />;
 
     case "menu":
-      return <MenuTemplate />;
+      return <QuizTemplate />;
 
     default:
       return <AuthTemplate />;

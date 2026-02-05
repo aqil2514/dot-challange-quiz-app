@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import { Spinner } from "@/components/ui/spinner";
 import type { QuizApiResult } from "../../types/quiz-api-result.types";
-import { useQuizStore } from "@/store/quiz.store";
+import { useQuizStore } from "@/store/quiz/quiz.store";
 
 interface Props {
   onSubmitSuccess: () => void;
@@ -26,7 +26,13 @@ const buildQuery = (values: QuestConfigSchemaType) => {
   const url = new URL("api.php", "https://opentdb.com");
 
   Object.entries(values).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === "any" || value === 0)
+    if (
+      value === undefined ||
+      value === null ||
+      value === "any" ||
+      value === -1 ||
+      key === "categoryName"
+    )
       return;
 
     url.searchParams.append(key, String(value));
@@ -37,7 +43,7 @@ const buildQuery = (values: QuestConfigSchemaType) => {
 
 export function MenuForm({ onSubmitSuccess }: Props) {
   const { logout } = useAuth();
-  const {updateMeta, updateQuiz} = useQuizStore()
+  const { updateMeta, updateQuiz } = useQuizStore();
   const form = useForm<QuestConfigSchemaType>({
     mode: "onChange",
     resolver: zodResolver(questConfigSchema),
@@ -92,7 +98,7 @@ export function MenuForm({ onSubmitSuccess }: Props) {
         <Button
           onClick={() => {
             form.reset();
-            
+
             toast.info("Pengaturan telah direset");
           }}
           variant={"outline"}
@@ -100,7 +106,17 @@ export function MenuForm({ onSubmitSuccess }: Props) {
         >
           Reset
         </Button>
-        <Button onClick={logout} variant="destructive" type="button">
+
+        {/* TODO : HAPUS KALO UDAH ADA HEADER */}
+        <Button
+          onClick={() => {
+            logout();
+            updateMeta("quizStatus", "idle");
+            toast.success("Berhasil logout!");
+          }}
+          variant="destructive"
+          type="button"
+        >
           Logout
         </Button>
       </div>

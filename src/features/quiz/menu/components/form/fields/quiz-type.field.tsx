@@ -12,55 +12,52 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { QuestConfigSchemaType } from "@/features/menu/schema/quest-config.schema";
+import type { QuestConfigSchemaType } from "@/features/quiz/menu/schema/quest-config.schema";
 import { Controller, type UseFormReturn } from "react-hook-form";
 
 interface Props {
   form: UseFormReturn<QuestConfigSchemaType>;
 }
 
-const data: { id: QuestConfigSchemaType["difficulty"]; name: string }[] = [
+const data: { id: QuestConfigSchemaType["type"]; name: string }[] = [
   {
     id: "any",
     name: "Campur",
   },
   {
-    id: "easy",
-    name: "Mudah",
+    id: "boolean",
+    name: "Benar / Salah",
   },
   {
-    id: "medium",
-    name: "Lumayan",
-  },
-  {
-    id: "hard",
-    name: "Sulit",
+    id: "multiple",
+    name: "Pilihan Ganda",
   },
 ];
 
-export function MenuQuizDifficulty({ form }: Props) {
+export function MenuQuizType({ form }: Props) {
   const isSubmitting = form.formState.isSubmitting;
+
   return (
     <FieldGroup>
       <Controller
         control={form.control}
-        name="difficulty"
+        name="type"
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor={field.name}>Kategori</FieldLabel>
+            <FieldLabel htmlFor={field.name}>Tipe Quiz</FieldLabel>
             <Select
               value={field.value}
               onValueChange={(e) => field.onChange(e)}
               disabled={isSubmitting}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Kategori Quiz" />
+                <SelectValue placeholder="Tipe Quiz" />
               </SelectTrigger>
               <SelectContent position="popper">
                 <SelectGroup>
-                  {data.map((diff) => (
-                    <SelectItem value={diff.id} key={diff.id}>
-                      {diff.name}
+                  {data.map((typeQuiz) => (
+                    <SelectItem value={typeQuiz.id} key={typeQuiz.id}>
+                      {typeQuiz.name}
                     </SelectItem>
                   ))}
                 </SelectGroup>

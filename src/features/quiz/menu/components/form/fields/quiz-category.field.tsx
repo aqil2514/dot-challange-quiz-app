@@ -14,8 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import type { QuestConfigSchemaType } from "@/features/menu/schema/quest-config.schema";
-import type { TriviaCategories } from "@/features/menu/types/quiz-category.types";
+import type { QuestConfigSchemaType } from "@/features/quiz/menu/schema/quest-config.schema";
+import type { TriviaCategories } from "@/features/quiz/menu/types/quiz-category.types";
 import { fetcher } from "@/lib/fetcher";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import useSWR from "swr";
