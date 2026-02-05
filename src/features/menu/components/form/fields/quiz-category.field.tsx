@@ -54,7 +54,7 @@ export function MenuQuizCategory({ form }: Props) {
       </div>
     );
 
-    const isSubmitting = form.formState.isSubmitting;
+  const isSubmitting = form.formState.isSubmitting;
 
   return (
     <FieldGroup>
@@ -66,7 +66,20 @@ export function MenuQuizCategory({ form }: Props) {
             <FieldLabel htmlFor={field.name}>Kategori</FieldLabel>
             <Select
               value={String(field.value)}
-              onValueChange={(e) => field.onChange(Number(e))}
+              onValueChange={(e) => {
+                const value = Number(e);
+                const isMixCategory = value === -1;
+                field.onChange(value);
+
+                const categoryName =
+                  data.trivia_categories.find((cat) => cat.id === value)
+                    ?.name ?? "Semua Kategori";
+
+                form.setValue(
+                  "categoryName",
+                  isMixCategory ? "Semua Kategori" : categoryName,
+                );
+              }}
               disabled={isSubmitting}
             >
               <SelectTrigger className="w-full">
@@ -74,7 +87,7 @@ export function MenuQuizCategory({ form }: Props) {
               </SelectTrigger>
               <SelectContent position="popper">
                 <SelectGroup>
-                  <SelectItem value="0">Semua Kategori</SelectItem>
+                  <SelectItem value="-1">Semua Kategori</SelectItem>
                   {data.trivia_categories.map((category) => (
                     <SelectItem value={String(category.id)} key={category.id}>
                       {category.name}

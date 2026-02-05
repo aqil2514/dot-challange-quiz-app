@@ -9,7 +9,11 @@ import {
 import { useAuth } from "@/store/auth.store";
 import { MenuForm } from "../form/form.menu";
 
-export function MenuCard() {
+interface Props {
+  onSubmitSuccess: () => void;
+}
+
+export function MenuCard({ onSubmitSuccess }: Props) {
   const { user } = useAuth();
 
   if (!user) return null;
@@ -23,11 +27,9 @@ export function MenuCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <MenuForm />
+        <MenuForm onSubmitSuccess={onSubmitSuccess} />
       </CardContent>
-      <CardFooter>
-        
-      </CardFooter>
+      <CardFooter></CardFooter>
     </Card>
   );
 }

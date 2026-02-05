@@ -16,6 +16,11 @@ import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import { Spinner } from "@/components/ui/spinner";
 import type { QuizApiResult } from "../../types/quiz-api-result.types";
+import { useQuizStore } from "@/store/quiz.store";
+
+interface Props {
+  onSubmitSuccess: () => void;
+}
 
 const buildQuery = (values: QuestConfigSchemaType) => {
   const url = new URL("api.php", "https://opentdb.com");
@@ -30,8 +35,9 @@ const buildQuery = (values: QuestConfigSchemaType) => {
   return url.toString();
 };
 
-export function MenuForm() {
+export function MenuForm({ onSubmitSuccess }: Props) {
   const { logout } = useAuth();
+  const {updateMeta, updateQuiz} = useQuizStore()
   const form = useForm<QuestConfigSchemaType>({
     mode: "onChange",
     resolver: zodResolver(questConfigSchema),
@@ -46,12 +52,16 @@ export function MenuForm() {
     try {
       const { data } = await axios.get<QuizApiResult>(url);
 
-      toast.success("Kuiz berhasil diambil");
+      toast.success("Kuiz berhasil diambil!");
+      updateMeta("config", values);
+      updateQuiz(data.results);
+      onSubmitSuccess();
       console.log(data);
     } catch (error) {
       console.error(error);
     }
   };
+
   return (
     <form
       onSubmit={form.handleSubmit(submitHandler, () =>
@@ -79,7 +89,15 @@ export function MenuForm() {
             "Mulai Kuiz"
           )}
         </Button>
-        <Button onClick={() => form.reset()} variant={"outline"} type="reset">
+        <Button
+          onClick={() => {
+            form.reset();
+            
+            toast.info("Pengaturan telah direset");
+          }}
+          variant={"outline"}
+          type="reset"
+        >
           Reset
         </Button>
         <Button onClick={logout} variant="destructive" type="button">
