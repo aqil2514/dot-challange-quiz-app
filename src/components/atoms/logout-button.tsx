@@ -5,17 +5,17 @@ import { toast } from "sonner";
 
 export function LogoutButton() {
   const { logout } = useAuth();
-  const { updateMeta, updateQuiz } = useQuizStore();
+  const { updateMeta } = useQuizStore();
   return (
     <Button
       onClick={() => {
         logout();
         updateMeta("quizStatus", "idle");
-        updateQuiz([]);
         toast.success("Berhasil logout!");
       }}
       variant="destructive"
       type="button"
+      size={"sm"}
     >
       Logout
     </Button>

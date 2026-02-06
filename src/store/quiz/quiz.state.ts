@@ -9,5 +9,6 @@ export const createQuizState = (): QuizStoreState => {
   return {
     meta: defaultMeta,
     quiz: [],
+    progress: null,
   };
 };

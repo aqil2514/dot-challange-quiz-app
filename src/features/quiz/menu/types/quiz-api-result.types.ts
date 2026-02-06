@@ -8,8 +8,12 @@ export interface QuizApiResult {
 export interface QuizItem {
   category: string;
   correct_answer: string;
-  difficulty: QuestConfigSchemaType['difficulty'];
+  difficulty: QuestConfigSchemaType["difficulty"];
   incorrect_answers: string[];
   question: string;
-  type: QuestConfigSchemaType['type'];
+  type: QuestConfigSchemaType["type"];
+}
+
+export interface QuizItemWithId extends QuizItem {
+  quizId: string;
 }

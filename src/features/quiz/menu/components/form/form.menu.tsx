@@ -6,7 +6,6 @@ import {
 } from "../../schema/quest-config.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/store/auth.store";
 import { MenuQuizNumber } from "./fields/quiz-number.field";
 import { toast } from "sonner";
 import { MenuQuizCategory } from "./fields/quiz-category.field";
@@ -15,7 +14,10 @@ import { MenuQuizType } from "./fields/quiz-type.field";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import { Spinner } from "@/components/ui/spinner";
-import type { QuizApiResult } from "../../types/quiz-api-result.types";
+import type {
+  QuizApiResult,
+  QuizItemWithId,
+} from "../../types/quiz-api-result.types";
 import { useQuizStore } from "@/store/quiz/quiz.store";
 
 interface Props {
@@ -42,7 +44,6 @@ const buildQuery = (values: QuestConfigSchemaType) => {
 };
 
 export function MenuForm({ onSubmitSuccess }: Props) {
-  const { logout } = useAuth();
   const { updateMeta, updateQuiz } = useQuizStore();
   const form = useForm<QuestConfigSchemaType>({
     mode: "onChange",
@@ -58,9 +59,14 @@ export function MenuForm({ onSubmitSuccess }: Props) {
     try {
       const { data } = await axios.get<QuizApiResult>(url);
 
+      const quizWithId: QuizItemWithId[] = data.results.map((quiz, i) => ({
+        ...quiz,
+        quizId: `quiz-${i + 1}`,
+      }));
+
       toast.success("Kuiz berhasil diambil!");
       updateMeta("config", values);
-      updateQuiz(data.results);
+      updateQuiz(quizWithId);
       onSubmitSuccess();
       console.log(data);
     } catch (error) {
@@ -105,19 +111,6 @@ export function MenuForm({ onSubmitSuccess }: Props) {
           type="reset"
         >
           Reset
-        </Button>
-
-        {/* TODO : HAPUS KALO UDAH ADA HEADER */}
-        <Button
-          onClick={() => {
-            logout();
-            updateMeta("quizStatus", "idle");
-            toast.success("Berhasil logout!");
-          }}
-          variant="destructive"
-          type="button"
-        >
-          Logout
         </Button>
       </div>
     </form>

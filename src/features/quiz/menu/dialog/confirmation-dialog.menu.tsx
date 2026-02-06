@@ -33,7 +33,8 @@ const quizType: Record<QuestConfigSchemaType["type"], string> = {
 };
 
 export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
-  const { meta, resetMeta, resetQuiz, updateMeta } = useQuizStore();
+  const { meta, resetMeta, resetQuiz, updateMeta, playQuiz } =
+    useQuizStore();
   const config = meta.config;
 
   if (!config) return null;
@@ -44,8 +45,9 @@ export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
   };
 
   const playHandle = () => {
+    playQuiz();
+    toast.info("Quiz dimulai! Selamat mengerjakan");
     updateMeta("quizStatus", "play");
-    toast.info("Quiz dimulai! Selamat mengerjakan")
   };
 
   return (
