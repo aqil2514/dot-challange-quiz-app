@@ -44,7 +44,7 @@ const buildQuery = (values: QuestConfigSchemaType) => {
 };
 
 export function MenuForm({ onSubmitSuccess }: Props) {
-  const { updateMeta, updateQuiz } = useQuizStore();
+  const { updateMeta, updateQuiz, progress, clearProgress } = useQuizStore();
   const form = useForm<QuestConfigSchemaType>({
     mode: "onChange",
     resolver: zodResolver(questConfigSchema),
@@ -82,6 +82,17 @@ export function MenuForm({ onSubmitSuccess }: Props) {
       className="space-y-4"
     >
       <Separator />
+      <Button
+        onClick={() => {
+          form.reset();
+
+          toast.info("Pengaturan telah direset");
+        }}
+        variant={"outline"}
+        type="reset"
+      >
+        Reset
+      </Button>
       <MenuQuizNumber form={form} />
       <MenuQuizCategory form={form} />
       <div className="grid grid-cols-2 gap-4">
@@ -90,7 +101,7 @@ export function MenuForm({ onSubmitSuccess }: Props) {
       </div>
       <Separator />
 
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-between gap-4">
         <Button variant={"outline"} type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="flex gap-1 items-center">
@@ -101,17 +112,19 @@ export function MenuForm({ onSubmitSuccess }: Props) {
             "Mulai Kuiz"
           )}
         </Button>
-        <Button
-          onClick={() => {
-            form.reset();
-
-            toast.info("Pengaturan telah direset");
-          }}
-          variant={"outline"}
-          type="reset"
-        >
-          Reset
-        </Button>
+        <div className="space-x-4">
+          <Button variant={"outline"} type="button" disabled={!progress} onClick={() => {
+            updateMeta("quizStatus", "play")
+          }} >
+            Lanjutkan Kuiz
+          </Button>
+          <Button variant={"outline"} type="button" disabled={!progress}  onClick={() => {
+            clearProgress();
+            toast.success("Progres berhasil dihapus")
+          }}>
+            Hapus Progres
+          </Button>
+        </div>
       </div>
     </form>
   );
