@@ -11,6 +11,7 @@ export interface QuizStoreMetaTypes {
 export interface QuizProgressTypes {
   currentIndex: number;
   answer: Record<string, string>;
+  endAt: number | null;
 }
 
 export interface QuizStoreState {
@@ -31,6 +32,7 @@ export interface QuizStoreAction {
 
   // Progress
   playQuiz: () => void;
+  playTimer:(timer:number | null) => void;
   nextQuiz: () => void;
   saveAnswer: (questId: string, answer: string) => void;
   clearProgress: () => void;

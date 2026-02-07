@@ -25,7 +25,12 @@ export const createQuizAction = (
 
     playQuiz: () =>
       set(() => {
-        return { progress: { answer: {}, currentIndex: 0 } };
+        return { progress: { answer: {}, currentIndex: 0, endAt: null } };
+      }),
+    playTimer: (timer) =>
+      set((state) => {
+        if (!state.progress) throw new Error("Progress tidak ada")
+        return { progress: { ...state.progress, endAt: timer ?? null } };
       }),
     nextQuiz: () =>
       set((state) => {

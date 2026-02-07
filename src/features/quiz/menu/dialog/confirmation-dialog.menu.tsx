@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { useQuizStore } from "@/store/quiz/quiz.store";
 import type { QuestConfigSchemaType } from "../schema/quest-config.schema";
 import { toast } from "sonner";
+import { getEndDuration, splitSeconds } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -33,7 +34,7 @@ const quizType: Record<QuestConfigSchemaType["type"], string> = {
 };
 
 export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
-  const { meta, resetMeta, resetQuiz, updateMeta, playQuiz } =
+  const { meta, resetMeta, resetQuiz, updateMeta, playQuiz, playTimer } =
     useQuizStore();
   const config = meta.config;
 
@@ -46,9 +47,17 @@ export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
 
   const playHandle = () => {
     playQuiz();
+    playTimer(config.isWithTimer ? getEndDuration(config.timerDuration) : null);
     toast.info("Quiz dimulai! Selamat mengerjakan");
     updateMeta("quizStatus", "play");
   };
+
+  const { hours, minutes, seconds } = splitSeconds(config.timerDuration);
+
+  const hoursText = hours !== 0 ? `${hours} Jam` : "";
+  const minutesText = minutes !== 0 ? `${minutes} Menit` : "";
+  const secondsText = seconds !== 0 ? `${seconds} Detik` : "";
+  const fullDurationText = `${hoursText} ${minutesText} ${secondsText}`;
 
   return (
     <AlertDialog onOpenChange={onOpenChange} open={open}>
@@ -73,6 +82,14 @@ export function MenuConfirmationDialog({ onOpenChange, open }: Props) {
           <ItemHorizontal
             label="Tipe Soal :"
             value={`${quizType[config.type]}`}
+          />
+          <ItemHorizontal
+            label="Waktu Mengerjakan :"
+            value={
+              config.isWithTimer
+                ? fullDurationText
+                : "Tidak ada"
+            }
           />
         </div>
         <Separator />

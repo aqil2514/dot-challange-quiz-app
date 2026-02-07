@@ -36,7 +36,6 @@ export function QuizAnswer() {
       {answers.map((answer, i) => (
         <Button
           key={`answer-${i}`}
-          size={"lg"}
           variant={"outline"}
           onClick={() => handleAnswer(currentQuiz.quizId, answer)}
         >

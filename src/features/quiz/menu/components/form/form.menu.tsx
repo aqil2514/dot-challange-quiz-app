@@ -19,6 +19,7 @@ import type {
   QuizItemWithId,
 } from "../../types/quiz-api-result.types";
 import { useQuizStore } from "@/store/quiz/quiz.store";
+import { QuizTimerField } from "./fields/quiz-timer.field";
 
 interface Props {
   onSubmitSuccess: () => void;
@@ -33,7 +34,9 @@ const buildQuery = (values: QuestConfigSchemaType) => {
       value === null ||
       value === "any" ||
       value === -1 ||
-      key === "categoryName"
+      key === "categoryName" ||
+      key === "isWithTimer" ||
+      key === "timerDuration"
     )
       return;
 
@@ -41,6 +44,15 @@ const buildQuery = (values: QuestConfigSchemaType) => {
   });
 
   return url.toString();
+};
+
+const apiMessage: Record<number, string> = {
+  0: "Berhasil. Data soal berhasil diambil.",
+  1: "Tidak ada hasil. Jumlah soal tidak mencukupi untuk permintaan ini.",
+  2: "Parameter tidak valid. Terdapat argumen yang tidak sesuai.",
+  3: "Token tidak ditemukan. Token sesi tidak ada.",
+  4: "Token habis. Semua soal untuk permintaan ini sudah digunakan. Silakan reset token.",
+  5: "Terlalu banyak permintaan. Silakan tunggu beberapa detik sebelum mencoba lagi.",
 };
 
 export function MenuForm({ onSubmitSuccess }: Props) {
@@ -64,13 +76,18 @@ export function MenuForm({ onSubmitSuccess }: Props) {
         quizId: `quiz-${i + 1}`,
       }));
 
-      toast.success("Kuiz berhasil diambil!");
-      updateMeta("config", values);
-      updateQuiz(quizWithId);
-      onSubmitSuccess();
-      console.log(data);
+      if (data.response_code === 0) {
+        toast.success(apiMessage[data.response_code]);
+        updateMeta("config", values);
+        updateQuiz(quizWithId);
+        onSubmitSuccess();
+        return;
+      }
+
+      toast.error(apiMessage[data.response_code])
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -93,7 +110,10 @@ export function MenuForm({ onSubmitSuccess }: Props) {
       >
         Reset
       </Button>
-      <MenuQuizNumber form={form} />
+      <div className="grid grid-cols-2 gap-4 items-center">
+        <MenuQuizNumber form={form} />
+        <QuizTimerField form={form} />
+      </div>
       <MenuQuizCategory form={form} />
       <div className="grid grid-cols-2 gap-4">
         <MenuQuizDifficulty form={form} />
@@ -113,15 +133,25 @@ export function MenuForm({ onSubmitSuccess }: Props) {
           )}
         </Button>
         <div className="space-x-4">
-          <Button variant={"outline"} type="button" disabled={!progress} onClick={() => {
-            updateMeta("quizStatus", "play")
-          }} >
+          <Button
+            variant={"outline"}
+            type="button"
+            disabled={!progress}
+            onClick={() => {
+              updateMeta("quizStatus", "play");
+            }}
+          >
             Lanjutkan Kuiz
           </Button>
-          <Button variant={"outline"} type="button" disabled={!progress}  onClick={() => {
-            clearProgress();
-            toast.success("Progres berhasil dihapus")
-          }}>
+          <Button
+            variant={"outline"}
+            type="button"
+            disabled={!progress}
+            onClick={() => {
+              clearProgress();
+              toast.success("Progres berhasil dihapus");
+            }}
+          >
             Hapus Progres
           </Button>
         </div>
